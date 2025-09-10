@@ -1,0 +1,5 @@
+train: C:/Users/user/Downloads/ujjian_crowd_monitoring/dataset/images/train
+val: C:/Users/user/Downloads/ujjian_crowd_monitoring/dataset/images/val
+
+nc: 1
+names: ['person']
