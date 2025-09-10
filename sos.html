@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SOS Safety</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    #sosBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: red;
+      color: white;
+      font-size: 22px;
+      padding: 20px 40px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    #map {
+      height: 300px;
+      width: 100%;
+      margin-top: 20px;
+      display: none; /* hidden until SOS is sent */
+    }
+  </style>
+</head>
+<body>
+  <h2>Welcome Pilgrim</h2>
+  <button id="sosBtn">🚨 SOS</button>
+  <div id="map"></div>
+
+  <script>
+    const sosBtn = document.getElementById("sosBtn");
+    const mapDiv = document.getElementById("map");
+
+    sosBtn.addEventListener("click", function() {
+      if (navigator.geolocation) {
+        sosBtn.disabled = true;
+        sosBtn.innerText = "⏳ Sending...";
+
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            fetch("http://localhost:5000/sos", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: "PILGRIM123",
+                qrId: "QR987654",
+                lat: pos.coords.latitude,
+                lon: pos.coords.longitude,
+                time: new Date().toISOString()
+              })
+            })
+            .then(res => {
+              if (res.ok) {
+                alert("✅ SOS request sent! Help is on the way.");
+
+                // Show pilgrim their location on map
+                mapDiv.style.display = "block";
+                const map = L.map('map').setView([pos.coords.latitude, pos.coords.longitude], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '© OpenStreetMap'
+                }).addTo(map);
+                L.marker([pos.coords.latitude, pos.coords.longitude]).addTo(map)
+                  .bindPopup("📍 Your Location (shared with Admin)").openPopup();
+
+                sosBtn.innerText = "✅ SOS Sent";
+              } else {
+                alert("❌ Failed to send SOS. Try again.");
+                sosBtn.disabled = false;
+                sosBtn.innerText = "🚨 SOS";
+              }
+            })
+            .catch(() => {
+              alert("🚫 Network error. Please check internet.");
+              sosBtn.disabled = false;
+              sosBtn.innerText = "🚨 SOS";
+            });
+          },
+          err => {
+            alert("⚠️ Please enable GPS to use SOS.");
+            sosBtn.disabled = false;
+            sosBtn.innerText = "🚨 SOS";
+          }
+        );
+      } else {
+        alert("Geolocation not supported.");
+      }
+    });
+  </script>
+</body>
+</html>

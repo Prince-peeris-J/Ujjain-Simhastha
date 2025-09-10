@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <style>
+    #map { height: 100vh; }
+  </style>
+</head>
+<body>
+  <h2>Admin Command Center</h2>
+  <div id="map"></div>
+
+  <script>
+    const map = L.map('map').setView([23.1765, 75.7885], 13); // Center on Ujjain
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    async function fetchSOS() {
+      let res = await fetch("http://localhost:5000/alerts");
+      let data = await res.json();
+      data.forEach(d => {
+        L.marker([d.lat, d.lon]).addTo(map)
+          .bindPopup(`🚨 SOS from ${d.userId}<br>QR: ${d.qrId}<br>${d.time}`);
+      });
+    }
+    setInterval(fetchSOS, 5000); // Refresh every 5s
+  </script>
+</body>
+</html>
