@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simhastha Guardian</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">🕉️ Simhastha Guardian</div>
+    <div class="chat-box" id="chat-box"></div>
+
+    <div class="chat-buttons">
+      <button onclick="showInfo('bathing')">Bathing Dates</button>
+      <button onclick="showInfo('bhasma')">Bhasma Aarti</button>
+      <button onclick="showInfo('dress')">Dress Code</button>
+      <button onclick="showInfo('navigate')">Navigate</button>
+    </div>
+
+    <div class="chat-input-area">
+      <input type="text" id="user-input" placeholder="Ask anything about Simhastha 2028..">
+      <button onclick="sendMessage()">Send</button>
+      <button class="sos-btn" onclick="alert('🚨 SOS Triggered! Help is on the way!')">SOS</button>
+    </div>
+  </div>
+  <script src="server.js"></script>
+</body>
+</html>
