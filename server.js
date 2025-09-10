@@ -1,19 +1,27 @@
-import express from "express";
-import cors from "cors";
+// server.js
+const express = require("express");
 const app = express();
-app.use(cors());
-app.use(express.json());
+const port = 3000;
 
-let sosRequests = [];
+function randomNearby(base, variance = 0.01) {
+  return base + (Math.random() - 0.5) * variance;
+}
 
-app.post("/sos", (req, res) => {
-  sosRequests.push(req.body);
-  console.log("SOS Received:", req.body);
-  res.json({ msg: "SOS received" });
+app.get("/crowd", (req, res) => {
+  const baseLat = 25.4358; // Mahakumbh Mela (Prayagraj)
+  const baseLng = 81.8463;
+
+  const points = Array.from({ length: 10 }, () => ({
+    lat: randomNearby(baseLat, 0.05),  // random nearby latitude
+    lng: randomNearby(baseLng, 0.05),  // random nearby longitude
+    weight: Math.floor(Math.random() * 5) + 1
+  }));
+
+  res.json(points);
 });
 
-app.get("/alerts", (req, res) => {
-  res.json(sosRequests);
-});
+app.use(express.static("public")); // serve frontend
 
-app.listen(5000, () => console.log("🚀 Server running on http://localhost:5000"));
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
